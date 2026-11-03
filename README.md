@@ -4,25 +4,25 @@
 
 Todo texto está codificado en un formato y tenemos que tener eso en cuenta
 
-El formato (charset) es lo que dice cómo pasar de bytes a letras. Lo normal hoy es usar UTF-8.
-Si guardas en uno y lees en otro te salen las cosas raras tipo "Ã±" en vez de "ñ" -> ojo con eso
+El formato (charset) indica cómo se pasa de bytes a letras. Lo habitual hoy es usar UTF-8.
+Si se guarda en un formato y se lee en otro, aparecen caracteres extraños como "Ã±" en lugar de "ñ".
 
 ### Streams
 
 **Stream:** "Riachuelo/Arroyo" Pasar bytes
 
-O sea, los bytes van llegando poco a poco, no tienes todo el archivo de golpe.
-InputStream para leer y OutputStream para escribir.
+Es decir, los bytes van llegando poco a poco, no se tiene todo el archivo a la vez.
+InputStream sirve para leer y OutputStream para escribir.
 
 - Fileinputstream como está implementada la lista
 - Socketinputstream otra forma
 
-Las dos son InputStream pero cada una saca los bytes de un sitio: una de un archivo y la otra de la red.
-Lo bueno es que a tu código le da igual de dónde vengan, lee igual.
+Las dos son InputStream, pero cada una obtiene los bytes de un sitio distinto: una de un archivo y la otra de la red.
+La ventaja es que al código que las usa no le importa de dónde vienen los datos, se leen igual.
 
 ### Interfaces
 
-Los streams van con bytes, Reader y Writer van con texto (caracteres) -> por eso aquí sí hay que decir el formato
+Los streams trabajan con bytes, mientras que Reader y Writer trabajan con texto (caracteres) -> por eso aquí sí hay que indicar el formato
 
 #### Reader
 
@@ -32,13 +32,13 @@ try(Reader reader = new FileReader(file, format)) { // FileReader(file, Aquí se
 }
 ```
 
-El format es el charset, p.ej. StandardCharsets.UTF_8
-readAllAsString() te lo lee todo de una (es nuevo, en Java antiguo no está)
-Si quieres ir línea a línea -> BufferedReader con readLine()
+El format es el charset, por ejemplo StandardCharsets.UTF_8
+readAllAsString() lee todo el texto de una vez (es un método nuevo, no está en versiones antiguas de Java)
+Para leer línea a línea -> BufferedReader con readLine()
 
 #### Writer
 
-Lo mismo que Reader pero al revés, para escribir
+Funciona igual que Reader, pero para escribir
 
 ```java
 try(Writer writer = new FileWriter(file, format)) {
@@ -46,8 +46,8 @@ try(Writer writer = new FileWriter(file, format)) {
 }
 ```
 
-Cuidado que por defecto machaca lo que hubiera en el archivo.
-Si quieres añadir al final -> FileWriter(file, format, true)
+Por defecto sobrescribe el contenido que hubiera en el archivo.
+Para añadir al final sin borrar -> FileWriter(file, format, true)
 
 ### File y URL
 
@@ -56,9 +56,9 @@ File file = new File(Nombre del archivo) // Creamos el archivo para trabajar con
 URL url = new URL(direccion)
 ```
 
-Ojo: new File() no crea nada en el disco, solo guarda la ruta. Para saber si existe -> file.exists()
-Con la URL haces url.openStream() y te da un InputStream, así que se lee igual que un archivo
-new URL() está deprecated en las versiones nuevas -> mejor URI.create(direccion).toURL()
+new File() no crea el archivo en el disco, solo guarda la ruta. Para comprobar si existe -> file.exists()
+Con la URL se usa url.openStream(), que devuelve un InputStream, así que se lee igual que un archivo
+new URL() está obsoleto en las versiones nuevas de Java -> es mejor usar URI.create(direccion).toURL()
 
 ### Abrir y cerrar archivos
 
@@ -68,13 +68,13 @@ Abrir archivos -> InputStream is = new FileInputStream(file) // <- NO PONER File
 		  is.close() // --> SIEMPRE QUE ABRIMOS UN ARCHIVO HAY QUE CERRARLO
 ```
 
-Lo de no poner FileInputStream es a la izquierda: declaras la variable como InputStream (lo general) y no como la clase concreta.
-Así si luego cambias de dónde lees solo tocas la parte de la derecha.
+Lo de no poner FileInputStream se refiere a la parte izquierda: la variable se declara como InputStream (el tipo general) y no como la clase concreta.
+Así, si más adelante cambia el origen de los datos, solo hay que modificar la parte derecha.
 
 > **SIEMPRE QUE ABRIMOS UN ARCHIVO HAY QUE CERRARLO**
 
-Si no lo cierras el archivo se queda pillado.
-Y el problema de hacer el close() a mano es que si salta una excepción antes, nunca llega a cerrarse.
+Si no se cierra, el archivo queda ocupado.
+El problema de llamar a close() manualmente es que, si se produce una excepción antes, el archivo nunca llega a cerrarse.
 
 #### Try with resources
 
@@ -86,5 +86,6 @@ try(InputStream is = new FileInputStream(file)){ // --> Cuando salga del try se 
 }
 ```
 
-Se cierra solo aunque pete algo dentro. Vale para cualquier cosa que implemente AutoCloseable
-y puedes meter varios dentro del try separados por ;
+El archivo se cierra automáticamente aunque se produzca un error dentro del try.
+Funciona con cualquier clase que implemente AutoCloseable,
+y se pueden abrir varios recursos en el mismo try separándolos con ;
