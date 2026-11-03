@@ -58,4 +58,44 @@ Para añadir al final sin borrar -> FileWriter(file, format, true)
 ### File y URL
 
 ```java
-File file = new File(Nombre del archivo) // Creamos
+File file = new File(Nombre del archivo) // Creamos el archivo para trabajar con el
+URL url = new URL(direccion)
+```
+
+new File() no crea el archivo en el disco, solo guarda la ruta.
+
+Para comprobar si existe -> file.exists()
+
+Con la URL se usa url.openStream(), que devuelve un InputStream, así que se lee igual que un archivo.
+
+new URL() está obsoleto en las versiones nuevas de Java -> es mejor usar URI.create(direccion).toURL()
+
+### Abrir y cerrar archivos
+
+```java
+Abrir archivos -> InputStream is = new FileInputStream(file) // <- NO PONER FileInputStream
+
+		  is.close() // --> SIEMPRE QUE ABRIMOS UN ARCHIVO HAY QUE CERRARLO
+```
+
+Lo de no poner FileInputStream se refiere a la parte izquierda: la variable se declara como InputStream (el tipo general) y no como la clase concreta. Así, si más adelante cambia el origen de los datos, solo hay que modificar la parte derecha.
+
+> **SIEMPRE QUE ABRIMOS UN ARCHIVO HAY QUE CERRARLO**
+
+Si no se cierra, el archivo queda ocupado.
+
+El problema de llamar a close() manualmente es que, si se produce una excepción antes, el archivo nunca llega a cerrarse.
+
+#### Try with resources
+
+Forma correcta de cerrar el archivo:
+
+```java
+try(InputStream is = new FileInputStream(file)){ // --> Cuando salga del try se cierra [TRY WITH RESOURCES]
+	is.readAllBytes();
+}
+```
+
+El archivo se cierra automáticamente aunque se produzca un error dentro del try.
+
+Funciona con cualquier clase que implemente AutoCloseable, y se pueden abrir varios recursos en el mismo try separándolos con ;
