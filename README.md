@@ -70,9 +70,6 @@ Abrir archivos -> InputStream is = new FileInputStream(file) // <- NO PONER File
 
 Lo de no poner FileInputStream se refiere a la parte izquierda: la variable se declara como InputStream (el tipo general) y no como la clase concreta.
 Así, si más adelante cambia el origen de los datos, solo hay que modificar la parte derecha.
-
-> **SIEMPRE QUE ABRIMOS UN ARCHIVO HAY QUE CERRARLO**
-
 Si no se cierra, el archivo queda ocupado.
 El problema de llamar a close() manualmente es que, si se produce una excepción antes, el archivo nunca llega a cerrarse.
 
